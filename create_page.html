@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Создать JSON</title>
+    <link rel="stylesheet" href="assets/css/uikit.min.css">
+    <link rel="stylesheet" href="assets/codemirror/lib/codemirror.css">
+    <style>
+        #editor {
+            border: 1px solid #dddddd;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="uk-container uk-container-small uk-flex uk-flex-center uk-flex-middle"
+        uk-height-viewport="offset-top: true">
+        <div class="uk-card uk-card-default uk-card-body uk-width-1-1">
+            <h1 class="uk-card-title uk-text-bold">JSON-storage</h1>
+            <p>
+                Введите код JSON и нажмите кнопку "Сохранить"
+            </p>
+            <div id="editor" class="uk-margin-bottom"></div>
+            <button id="saveBtn" class="uk-button uk-button-primary">Сохранить</button>
+
+            <div id="serverResponse" class="uk-margin-top"></div>
+        </div>
+    </div>
+
+    <script src="assets/js/uikit.min.js"></script>
+    <script src="assets/js/uikit-icons.min.js"></script>
+
+    <script src="assets/codemirror/lib/codemirror.js"></script>
+    <script src="assets/codemirror/mode/javascript/javascript.js"></script>
+    <script>
+        'use strict';
+
+        // codemirror init
+        let myCodeMirror = CodeMirror(editor, {
+            mode: "javascript",
+            smartIndent: false,
+            lineNumbers: true,
+            tabSize: 2,
+            indentWithTabs: true,
+            foldGutter: true,
+    gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+        });
+
+        // send JSON
+        document.querySelector('#saveBtn').addEventListener('click', function(){
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', window.location.href, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify(JSON.parse(myCodeMirror.getValue())));
+    
+            xhr.addEventListener('readystatechange', function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    document.querySelector('#serverResponse').innerHTML = `
+                        <div class="uk-alert-success" uk-alert>
+                            <p>Ваш JSON теперь доступен по адресу: <a href="${window.location.href + xhr.responseText}" target="_blank" class="uk-text-bold uk-text-success">${window.location.href + xhr.responseText}</a></p>
+                        </div>`;
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
