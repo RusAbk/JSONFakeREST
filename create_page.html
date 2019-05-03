@@ -49,10 +49,19 @@
 
         // send JSON
         document.querySelector('#saveBtn').addEventListener('click', function(){
+            let jsonCode;
+            try{
+                jsonCode = JSON.stringify(JSON.parse(myCodeMirror.getValue()));
+            } catch (e) {
+                if (e.name == "SyntaxError"){
+                    alert("Неверный формат JSON: " + e.message);
+                    return false;
+                }
+            }
             let xhr = new XMLHttpRequest();
             xhr.open('POST', window.location.href, true);
             xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.send(JSON.stringify(JSON.parse(myCodeMirror.getValue())));
+            xhr.send(jsonCode);
     
             xhr.addEventListener('readystatechange', function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
