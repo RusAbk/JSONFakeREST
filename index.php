@@ -13,7 +13,7 @@
             $file_name = $storage['directory'] . $json_id . $storage['format'];
             echo file_get_contents($file_name);
         } else {
-            echo "post form";
+            echo file_get_contents("create_page.html");
         }
         
     } elseif ($method === 'POST') {
